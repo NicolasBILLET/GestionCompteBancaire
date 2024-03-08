@@ -9,19 +9,26 @@
             int choix = 1;
             do
             {
-                string? saisie = AfficherMenu();
-                choix = Convert.ToInt32(saisie);
-                switch (choix)
+                try
                 {
-                    case 1:
-                        account = CreerUnCompte();
-                        break;
-                    case 2:
-                        FaireUnDepot(account);
-                        break;
-                    case 0:
-                        Console.WriteLine("Au revoir...");
-                        break;
+                    string? saisie = AfficherMenu();
+                    choix = Convert.ToInt32(saisie);
+                    switch (choix)
+                    {
+                        case 1:
+                            account = CreerUnCompte();
+                            break;
+                        case 2:
+                            FaireUnDepot(account);
+                            break;
+                        case 0:
+                            Console.WriteLine("Au revoir...");
+                            break;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    AfficherErreur(ex.Message);
                 }
             } while (choix != 0);
         }
@@ -54,7 +61,7 @@
             }
             else
             {
-                AfficherErreur("Il faut un nom de compte" + Environment.NewLine + "Création Abandonnée...");
+                throw new Exception( "Il faut un nom de compte" + Environment.NewLine + "Création Abandonnée...");
             }
             return temp;
         }
