@@ -6,6 +6,7 @@ La progression est la suivante :
 1. Application Console
 - Gestion des erreurs
 - Classe de Gestion
+- Classe IHM
 2. Extraction de la partie *métier* dans une librairie
 3. Persistance des données via des fichiers structurés
 - Fichiers CSV
