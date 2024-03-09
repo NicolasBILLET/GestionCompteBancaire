@@ -30,6 +30,15 @@ namespace GestionCompteBancaire
         private static int compteNumeroBase = 1234567890;
         private List<Transaction> allTransactions = new List<Transaction>();
 
+        public Transaction[] Transactions
+        {
+            get
+            {
+                // Cree une copie, sous forme de tableau.
+                return allTransactions.ToArray();
+            }
+        }
+
         // Constructeur
         public CompteBancaire(string nom, decimal initialSolde)
         {

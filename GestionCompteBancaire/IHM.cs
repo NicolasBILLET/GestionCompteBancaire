@@ -45,6 +45,15 @@ namespace GestionCompteBancaire
                         case 2:
                             FaireUnDepot();
                             break;
+                        case 3:
+                            FaireUnRetrait();
+                            break;
+                        case 4:
+                            AfficherTransactions();
+                            break;
+                        case 5:
+                            AfficherSolde();
+                            break;
                         case 6:
                             ListerLesComptes();
                             break;
@@ -61,6 +70,24 @@ namespace GestionCompteBancaire
                     AfficherErreur(ex.Message);
                 }
             } while (choix != 0);
+        }
+
+        private void AfficherSolde()
+        {
+            Console.WriteLine("--== Afficher le Solde ==--");
+            Console.WriteLine($"Solde : {Account.Solde:F2}");
+            
+        }
+
+        private void AfficherTransactions()
+        {
+            Console.WriteLine("--== Afficher les Transactions ==--");
+            foreach( var transact in Account.Transactions)
+            {
+                Console.Write( "{0} : ", transact.Date.ToString("dd:MM:yyyy"));
+                Console.WriteLine( "{0,10}", transact.Montant.ToString("N2") );
+                Console.WriteLine(transact.Notes);
+            }
         }
 
         private int ChoisirUnCompte()
@@ -111,6 +138,18 @@ namespace GestionCompteBancaire
             Console.Write("Remarques :");
             string remarque = Console.ReadLine();
             Account.FaireDepot(depot, DateTime.Now, remarque);
+        }
+
+        private void FaireUnRetrait()
+        {
+            decimal depot = 0;
+            Console.WriteLine("--== Faire un retrait ==--");
+            Console.Write("Montant du retrait :");
+            string valeur = Console.ReadLine();
+            depot = Convert.ToDecimal(valeur);
+            Console.Write("Remarques :");
+            string remarque = Console.ReadLine();
+            Account.FaireRetrait(depot, DateTime.Now, remarque);
         }
 
         private CompteBancaire? CreerUnCompte()
