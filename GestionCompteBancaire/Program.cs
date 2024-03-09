@@ -4,22 +4,33 @@
     {
         static void Main(string[] args)
         {
-            // L'objet CompteBancaire que l'on va utiliser
-            CompteBancaire account = null;
+            // L'objet Gestion de Compte bancaire
+            GestionDeComptes gestion = new GestionDeComptes();
+            // Le Numéro du Compte "actif"
+            int actuel = -1;
+
             int choix = 1;
             do
             {
                 try
                 {
-                    string? saisie = AfficherMenu();
+                    string? saisie = AfficherMenu(gestion, actuel);
                     choix = Convert.ToInt32(saisie);
                     switch (choix)
                     {
                         case 1:
-                            account = CreerUnCompte();
+                            var account = CreerUnCompte();
+                            gestion.Ajouter(account);
+                            actuel = gestion.Count - 1;
                             break;
                         case 2:
-                            FaireUnDepot(account);
+                            FaireUnDepot(gestion[actuel]);
+                            break;
+                        case 6:
+                            ListerLesComptes(gestion);
+                            break;
+                        case 7:
+                            actuel = ChoisirUnCompte(gestion);
                             break;
                         case 0:
                             Console.WriteLine("Au revoir...");
@@ -31,6 +42,44 @@
                     AfficherErreur(ex.Message);
                 }
             } while (choix != 0);
+        }
+
+        private static int ChoisirUnCompte(GestionDeComptes gestion)
+        {
+            int choix = -1;
+            Console.WriteLine("--== Choisir un compte ==--");
+            if (gestion.Count > 0)
+            {
+                Console.WriteLine($"Choix (0-{gestion.Count-1}) : ");
+                string saisie = Console.ReadLine();
+                choix = Convert.ToInt32(saisie);
+                if ((choix < 0) || (choix >= gestion.Count))
+                {
+                    // Valeur non valide. On devrait générer une Exception ??
+                    choix = -1;
+                }
+            }
+            else
+            {
+                Console.WriteLine("La liste est vide.");
+            }
+            return choix;
+        }
+
+        private static void ListerLesComptes(GestionDeComptes gestion)
+        {
+            Console.WriteLine("--== Lister les comptes ==--");
+            if (gestion.Count > 0)
+            {
+                for (int i = 0; i < gestion.Count; i++)
+                {
+                    Console.WriteLine($"{i:00} - {gestion[i].Proprietaire} ");
+                }
+            }
+            else
+            {
+                Console.WriteLine("La liste est vide.");
+            }
         }
 
         private static void FaireUnDepot(CompteBancaire? account)
@@ -61,7 +110,7 @@
             }
             else
             {
-                throw new Exception( "Il faut un nom de compte" + Environment.NewLine + "Création Abandonnée...");
+                throw new Exception("Il faut un nom de compte" + Environment.NewLine + "Création Abandonnée...");
             }
             return temp;
         }
@@ -73,14 +122,28 @@
             Console.ForegroundColor = ConsoleColor.White;
         }
 
-        private static string? AfficherMenu()
+        private static string? AfficherMenu(GestionDeComptes gestion, int actuel)
         {
+            if (actuel >= 0)
+            {
+                Console.WriteLine(" --=== **** ===-- ");
+                Console.WriteLine("Compte actuel :" + gestion[actuel].Proprietaire);
+            }
             Console.WriteLine(" --=== Menu ===-- ");
+
             Console.WriteLine("1: Créer un compte");
-            Console.WriteLine("2: Faire un dépot");
-            Console.WriteLine("3: Faire un retrait");
-            Console.WriteLine("4: Afficher les transactions");
-            Console.WriteLine("5: Afficher le solde");
+            if (actuel >= 0)
+            {
+                Console.WriteLine("2: Faire un dépot");
+                Console.WriteLine("3: Faire un retrait");
+                Console.WriteLine("4: Afficher les transactions");
+                Console.WriteLine("5: Afficher le solde");
+            }
+            if (gestion.Count > 0)
+            {
+                Console.WriteLine("6: Lister les comptes");
+                Console.WriteLine("7: Choisir un compte");
+            }
             Console.WriteLine("0: Quitter");
             Console.Write("Votre Choix :");
             var saisie = Console.ReadLine();
