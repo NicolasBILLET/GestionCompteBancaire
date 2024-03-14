@@ -39,6 +39,7 @@ namespace GestionCompteBancaire
             }
         }
 
+
         // Constructeur
         public CompteBancaire(string nom, decimal initialSolde)
         {
@@ -47,7 +48,6 @@ namespace GestionCompteBancaire
             this.Numero = compteNumeroBase.ToString();
             compteNumeroBase++;
             FaireDepot(initialSolde, DateTime.Now, "Solde initial"); //(#4)
-
         }
 
         // Methodes
