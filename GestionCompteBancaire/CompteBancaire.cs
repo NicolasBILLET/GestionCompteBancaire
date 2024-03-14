@@ -9,7 +9,7 @@ namespace GestionCompteBancaire
     public class CompteBancaire
     {
         // Proprietes
-        public string Numero { get; }
+        public string Numero { get; protected set; }
         public string Proprietaire { get; set; }
         public decimal Solde
         {
@@ -39,6 +39,11 @@ namespace GestionCompteBancaire
             }
         }
 
+        // Il est utilisé par la Classe fille
+        protected CompteBancaire()
+        {
+
+        }
 
         // Constructeur
         public CompteBancaire(string nom, decimal initialSolde)
