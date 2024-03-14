@@ -9,22 +9,10 @@ namespace GestionCompteBancaire
     public class IHM
     {
         // L'objet Gestion de Compte bancaire
-        GestionDeComptes gestion = null;
-        // Le Numéro du Compte "actif"
-        int actuel;
-
-        CompteBancaire Account
-        {
-            get
-            {
-                return gestion[actuel];
-            }
-        }
+        CompteBancaire account = null;
 
         public IHM()
         {
-            gestion = new GestionDeComptes();
-            actuel = -1;
         }
         public void Start()
         {
@@ -39,8 +27,6 @@ namespace GestionCompteBancaire
                     {
                         case 1:
                             var account = CreerUnCompte();
-                            gestion.Ajouter(account);
-                            actuel = gestion.Count - 1;
                             break;
                         case 2:
                             FaireUnDepot();
@@ -53,12 +39,6 @@ namespace GestionCompteBancaire
                             break;
                         case 5:
                             AfficherSolde();
-                            break;
-                        case 6:
-                            ListerLesComptes();
-                            break;
-                        case 7:
-                            actuel = ChoisirUnCompte();
                             break;
                         case 0:
                             Console.WriteLine("Au revoir...");
@@ -75,56 +55,18 @@ namespace GestionCompteBancaire
         private void AfficherSolde()
         {
             Console.WriteLine("--== Afficher le Solde ==--");
-            Console.WriteLine($"Solde : {Account.Solde:F2}");
-            
+            Console.WriteLine($"Solde : {account.Solde:F2}");
+
         }
 
         private void AfficherTransactions()
         {
             Console.WriteLine("--== Afficher les Transactions ==--");
-            foreach( var transact in Account.Transactions)
+            foreach (var transact in account.Transactions)
             {
-                Console.Write( "{0} : ", transact.Date.ToString("dd:MM:yyyy"));
-                Console.WriteLine( "{0,10}", transact.Montant.ToString("N2") );
+                Console.Write("{0} : ", transact.Date.ToString("dd:MM:yyyy"));
+                Console.WriteLine("{0,10}", transact.Montant.ToString("N2"));
                 Console.WriteLine(transact.Notes);
-            }
-        }
-
-        private int ChoisirUnCompte()
-        {
-            int choix = -1;
-            Console.WriteLine("--== Choisir un compte ==--");
-            if (gestion.Count > 0)
-            {
-                Console.WriteLine($"Choix (0-{gestion.Count - 1}) : ");
-                string saisie = Console.ReadLine();
-                choix = Convert.ToInt32(saisie);
-                if ((choix < 0) || (choix >= gestion.Count))
-                {
-                    // Valeur non valide. On devrait générer une Exception ??
-                    choix = -1;
-                }
-            }
-            else
-            {
-                Console.WriteLine("La liste est vide.");
-            }
-            return choix;
-        }
-
-        private void ListerLesComptes()
-        {
-            Console.WriteLine("--== Lister les comptes ==--");
-            if (gestion.Count > 0)
-            {
-                for (int i = 0; i < gestion.Count; i++)
-                {
-                    Console.WriteLine($"{i:00} - {gestion[i].Proprietaire} ");
-                }
-            }
-            else
-            {
-                Console.WriteLine("La liste est vide.");
             }
         }
 
@@ -137,7 +79,7 @@ namespace GestionCompteBancaire
             depot = Convert.ToDecimal(valeur);
             Console.Write("Remarques :");
             string remarque = Console.ReadLine();
-            Account.FaireDepot(depot, DateTime.Now, remarque);
+            account.FaireDepot(depot, DateTime.Now, remarque);
         }
 
         private void FaireUnRetrait()
@@ -149,7 +91,7 @@ namespace GestionCompteBancaire
             depot = Convert.ToDecimal(valeur);
             Console.Write("Remarques :");
             string remarque = Console.ReadLine();
-            Account.FaireRetrait(depot, DateTime.Now, remarque);
+            account.FaireRetrait(depot, DateTime.Now, remarque);
         }
 
         private CompteBancaire? CreerUnCompte()
@@ -182,25 +124,20 @@ namespace GestionCompteBancaire
 
         private string? AfficherMenu()
         {
-            if (actuel >= 0)
+            if (account != null)
             {
                 Console.WriteLine(" --=== **** ===-- ");
-                Console.WriteLine("Compte actuel :" + gestion[actuel].Proprietaire);
+                Console.WriteLine("Compte actuel :" + account.Proprietaire);
             }
             Console.WriteLine(" --=== Menu ===-- ");
 
             Console.WriteLine("1: Créer un compte");
-            if (actuel >= 0)
+            if (account != null)
             {
                 Console.WriteLine("2: Faire un dépot");
                 Console.WriteLine("3: Faire un retrait");
                 Console.WriteLine("4: Afficher les transactions");
                 Console.WriteLine("5: Afficher le solde");
-            }
-            if (gestion.Count > 0)
-            {
-                Console.WriteLine("6: Lister les comptes");
-                Console.WriteLine("7: Choisir un compte");
             }
             Console.WriteLine("0: Quitter");
             Console.Write("Votre Choix :");
@@ -209,3 +146,4 @@ namespace GestionCompteBancaire
         }
     }
 }
+
