@@ -35,10 +35,10 @@ namespace GestionCompteBancaire
         public void Ecrire()
         {
             //
-            if (File.Exists(NomDeFichier))
-            {
-                throw new Exception(String.Format("Le Fichier {0} existe déjà.", NomDeFichier));
-            }
+            //if (File.Exists(NomDeFichier))
+            //{
+            //    throw new Exception(String.Format("Le Fichier {0} existe déjà.", NomDeFichier));
+            //}
             // On crée un fichier
             StreamWriter sw = new StreamWriter(NomDeFichier);
             //
