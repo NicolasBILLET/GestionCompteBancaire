@@ -9,7 +9,7 @@ namespace GestionCompteBancaire
     public class IHM
     {
         // L'objet Gestion de Compte bancaire
-        CompteBancaire account = null;
+        CompteAvecSauvegarde account = null;
 
         public IHM()
         {
@@ -26,7 +26,7 @@ namespace GestionCompteBancaire
                     switch (choix)
                     {
                         case 1:
-                            var account = CreerUnCompte();
+                            account = CreerUnCompte();
                             break;
                         case 2:
                             FaireUnDepot();
@@ -40,6 +40,12 @@ namespace GestionCompteBancaire
                         case 5:
                             AfficherSolde();
                             break;
+                        case 6:
+                            SauvegarderCompte();
+                            break;
+                        case 7:
+                            LireCompte();
+                            break;
                         case 0:
                             Console.WriteLine("Au revoir...");
                             break;
@@ -50,6 +56,39 @@ namespace GestionCompteBancaire
                     AfficherErreur(ex.Message);
                 }
             } while (choix != 0);
+        }
+
+        private void LireCompte()
+        {
+            var fichiers = Directory.EnumerateFiles(Directory.GetCurrentDirectory(), "*.csv");
+            if (fichiers.Count() > 0)
+            {
+                Console.WriteLine("--== Fichiers existants ==--");
+                foreach (var fichierCSV in fichiers)
+                {
+                    Console.WriteLine(Path.GetFileName(fichierCSV));
+                }
+            }
+            Console.WriteLine("--== Charger un fichier ==--");
+            Console.Write("Nom du fichier à charger : ");
+            string fichier = Console.ReadLine();
+            // Pas d'extension CSV à la fin ??
+            if ( !fichier.EndsWith(".csv", StringComparison.InvariantCultureIgnoreCase))
+            {
+                fichier += ".csv";
+            }
+            if (!File.Exists(fichier))
+            {
+                Console.WriteLine("-=> Désolé le fichier n'existe pas.");
+                return;
+            }
+            account = CompteAvecSauvegarde.Lire( fichier );
+
+        }
+
+        private void SauvegarderCompte()
+        {
+            account.Ecrire();
         }
 
         private void AfficherSolde()
@@ -94,9 +133,9 @@ namespace GestionCompteBancaire
             account.FaireRetrait(depot, DateTime.Now, remarque);
         }
 
-        private CompteBancaire? CreerUnCompte()
+        private CompteAvecSauvegarde CreerUnCompte()
         {
-            CompteBancaire temp = null;
+            CompteAvecSauvegarde temp = null;
             Console.WriteLine("--== Création d'un compte ==--");
             Console.Write("Nom du bénéficiaire :");
             string nom = Console.ReadLine();
@@ -106,7 +145,7 @@ namespace GestionCompteBancaire
                 Console.Write("Solde Initial :");
                 string valeur = Console.ReadLine();
                 solde = Convert.ToDecimal(valeur);
-                temp = new CompteBancaire(nom, solde);
+                temp = new CompteAvecSauvegarde(nom, solde);
             }
             else
             {
@@ -130,7 +169,6 @@ namespace GestionCompteBancaire
                 Console.WriteLine("Compte actuel :" + account.Proprietaire);
             }
             Console.WriteLine(" --=== Menu ===-- ");
-
             Console.WriteLine("1: Créer un compte");
             if (account != null)
             {
@@ -138,7 +176,9 @@ namespace GestionCompteBancaire
                 Console.WriteLine("3: Faire un retrait");
                 Console.WriteLine("4: Afficher les transactions");
                 Console.WriteLine("5: Afficher le solde");
+                Console.WriteLine("6: Sauvegarder le Compte");
             }
+            Console.WriteLine("7: Lire un compte");
             Console.WriteLine("0: Quitter");
             Console.Write("Votre Choix :");
             var saisie = Console.ReadLine();

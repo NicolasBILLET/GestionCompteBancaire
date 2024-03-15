@@ -23,17 +23,24 @@ namespace GestionCompteBancaire
             Numero = numero;
         }
 
+        public String NomDeFichier
+        {
+            get
+            {
+                return Proprietaire + "_" + Numero + ".csv";
+            }
+        }
+
 
         public void Ecrire()
         {
             //
-            string nomDeFichier = Proprietaire + "_" + Numero;
-            if (File.Exists(nomDeFichier))
+            if (File.Exists(NomDeFichier))
             {
-                throw new Exception(String.Format("Le Fichier {0} existe déjà.", nomDeFichier));
+                throw new Exception(String.Format("Le Fichier {0} existe déjà.", NomDeFichier));
             }
             // On crée un fichier
-            StreamWriter sw = new StreamWriter(nomDeFichier);
+            StreamWriter sw = new StreamWriter(NomDeFichier);
             //
             foreach (var transact in Transactions)
             {
@@ -69,16 +76,24 @@ namespace GestionCompteBancaire
             {
                 contenuOk = true;
                 string[] infosTransaction = ligne.Split(";");
-                if (infos.Length != 3)
+                if (infosTransaction.Length != 3)
                 {
                     throw new Exception($"Fichier : {nomDeFichier}" + Environment.NewLine +
                         $"Ligne : {ligne}" + Environment.NewLine +
                         "Contenu incorrect"
                         );
                 }
-                nouveau.FaireDepot(Convert.ToDecimal(infosTransaction[1]),
-                    DateTime.ParseExact(infosTransaction[0], "dd:MM:yyyy", CultureInfo.InvariantCulture),
-                    infosTransaction[2]);
+                decimal valeur = Convert.ToDecimal(infosTransaction[1]);
+                DateTime moment = DateTime.ParseExact(infosTransaction[0], "dd:MM:yyyy", CultureInfo.InvariantCulture);
+                String commentaire = infosTransaction[2];
+                if ( valeur > 0 )
+                {
+                    nouveau.FaireDepot(valeur, moment, commentaire);
+                }
+                else
+                {
+                    nouveau.FaireRetrait(-1*valeur, moment, commentaire);
+                }
             }
             sr.Close();
             if (!contenuOk)
